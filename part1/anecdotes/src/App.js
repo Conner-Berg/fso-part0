@@ -20,12 +20,11 @@ const App = () => {
 		"The only way to go fast, is to go well.",
 	];
 
-	const [selected, setSelected] = useState(0);
+	const randArr = () => Math.floor(Math.random() * 8);
 
-	const randAnecdote = () => {
-		const arrNum = Math.floor(Math.random() * 8);
-		setSelected(arrNum);
-	};
+	const [selected, setSelected] = useState(randArr);
+
+	const randAnecdote = () => setSelected(randArr);
 
 	return (
 		<div>
