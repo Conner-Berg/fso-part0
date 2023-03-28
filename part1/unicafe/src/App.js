@@ -1,31 +1,31 @@
 import { useState } from "react";
 
-const Header = ({ value }) => {
-	return <div className="header">{value}</div>;
+const Header = ({ text }) => {
+	return <div className="header">{text}</div>;
 };
 
-const Button = ({ handleClick, value }) => {
-	return <button onClick={handleClick}>{value}</button>;
+const Button = ({ handleClick, text }) => {
+	return <button onClick={handleClick}>{text}</button>;
 };
 
-const Feedback = ({ good, neutral, bad, all, average, positive }) => {
+const Statistics = ({ good, neutral, bad, all, average, positive }) => {
 	if (all === 0) return <div>No feedback given</div>;
 	return (
 		<div>
-			<Statistics value="good" amount={good} />
-			<Statistics value="neutral" amount={neutral} />
-			<Statistics value="bad" amount={bad} />
-			<Statistics value="all" amount={all} />
-			<Statistics value="average" amount={average} />
-			<Statistics value="positive" amount={positive} symbol="%" />
+			<StatisticLine text="good" value={good} />
+			<StatisticLine text="neutral" value={neutral} />
+			<StatisticLine text="bad" value={bad} />
+			<StatisticLine text="all" value={all} />
+			<StatisticLine text="average" value={average} />
+			<StatisticLine text="positive" value={positive} symbol="%" />
 		</div>
 	);
 };
 
-const Statistics = ({ value, amount, symbol }) => {
+const StatisticLine = ({ text, value, symbol }) => {
 	return (
 		<div>
-			{value} {amount} {symbol}
+			{text} {value} {symbol}
 		</div>
 	);
 };
@@ -45,12 +45,12 @@ const App = () => {
 
 	return (
 		<div>
-			<Header value="give feedback" />
-			<Button handleClick={addGood} value="good" />
-			<Button handleClick={addNeutral} value="neutral" />
-			<Button handleClick={addBad} value="bad" />
-			<Header value="statistics" />
-			<Feedback
+			<Header text="give feedback" />
+			<Button handleClick={addGood} text="good" />
+			<Button handleClick={addNeutral} text="neutral" />
+			<Button handleClick={addBad} text="bad" />
+			<Header text="statistics" />
+			<Statistics
 				good={good}
 				neutral={neutral}
 				bad={bad}
