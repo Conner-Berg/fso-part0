@@ -1,11 +1,11 @@
 import { useState } from "react";
 
-const Header = (props) => {
-	return <div className="header">{props.value}</div>;
+const Header = ({ value }) => {
+	return <div className="header">{value}</div>;
 };
 
-const Button = (props) => {
-	return <button onClick={props.handleClick}>{props.value}</button>;
+const Button = ({ handleClick, value }) => {
+	return <button onClick={handleClick}>{value}</button>;
 };
 
 const Feedback = ({ good, neutral, bad, all, average, positive }) => {
@@ -22,16 +22,15 @@ const Feedback = ({ good, neutral, bad, all, average, positive }) => {
 	);
 };
 
-const Statistics = (props) => {
+const Statistics = ({ value, amount, symbol }) => {
 	return (
 		<div>
-			{props.value} {props.amount} {props.symbol}
+			{value} {amount} {symbol}
 		</div>
 	);
 };
 
 const App = () => {
-	// save clicks of each button to its own state
 	const [good, setGood] = useState(0);
 	const [neutral, setNeutral] = useState(0);
 	const [bad, setBad] = useState(0);
@@ -58,9 +57,6 @@ const App = () => {
 				all={all}
 				average={average}
 				positive={positive}
-				addGood={addGood}
-				addNeutral={addNeutral}
-				addBad={addBad}
 			/>
 		</div>
 	);
