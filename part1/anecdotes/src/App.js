@@ -1,11 +1,7 @@
 import { useState } from "react";
 
 const Button = ({ handleClick, text }) => {
-	return (
-		<div>
-			<button onClick={handleClick}>{text} </button>
-		</div>
-	);
+	return <button onClick={handleClick}>{text} </button>;
 };
 
 const App = () => {
@@ -20,16 +16,29 @@ const App = () => {
 		"The only way to go fast, is to go well.",
 	];
 
-	const randArr = () => Math.floor(Math.random() * 8);
+	const [selected, setSelected] = useState(Array(8).fill(0));
+	// get currentSelected to equal random int 0-7
+	const [currentSelected, setCurrentSelected] = useState(
+		Math.floor(Math.random() * selected.length)
+	);
 
-	const [selected, setSelected] = useState(randArr);
+	const addVote = () => {
+		const newArray = [...selected];
+		newArray[currentSelected] += 1;
+		setSelected(newArray);
+	};
 
-	const randAnecdote = () => setSelected(randArr);
+	const getRandomAnecdote = () => {
+		const newIndex = Math.floor(Math.random() * selected.length);
+		setCurrentSelected(newIndex);
+	};
 
 	return (
 		<div>
-			{anecdotes[selected]}
-			<Button handleClick={randAnecdote} text="next anecdote" />
+			<div>{anecdotes[currentSelected]}</div>
+			<div>has {selected[currentSelected]} points</div>
+			<Button handleClick={addVote} text="vote" />
+			<Button handleClick={getRandomAnecdote} text="next anecdote" />
 		</div>
 	);
 };
