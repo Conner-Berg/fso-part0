@@ -1,4 +1,5 @@
 import Course from "./components/Course.js";
+import Total from "./components/Total.js";
 
 const App = () => {
 	const course = {
@@ -20,10 +21,20 @@ const App = () => {
 				exercises: 14,
 				id: 3,
 			},
+			{
+				name: "Redux",
+				exercises: 11,
+				id: 4,
+			},
 		],
 	};
 
-	return <Course course={course} />;
+	return (
+		<>
+			<Course course={course} />
+			<Total parts={course.parts} />
+		</>
+	);
 };
 
 export default App;
