@@ -17,20 +17,45 @@ const App = () => {
 	const addPerson = (event) => {
 		event.preventDefault();
 
-		const nameExists = persons.some((person) => person.name === newName);
-		if (nameExists)
-			return alert(`${newName} is already added to the phonebook`);
+		const nameExists = persons.find((person) => person.name === newName);
 
-		const personObject = {
-			name: newName,
-			number: newNumber,
-		};
+		if (nameExists.number === newNumber)
+			return alert(
+				`${newName} is already added to the phonebook with that number`
+			);
 
-		personsDB.create(personObject).then((returnedPerson) => {
-			setPersons(persons.concat(returnedPerson));
-			setNewName("");
-			setNewNumber("");
-		});
+		if (nameExists) {
+			const userConfirms = window.confirm(
+				`${newName} is already added to phonebook, replace the old number with a new one?`
+			);
+			if (userConfirms) {
+				const updatedPerson = { ...nameExists, number: newNumber };
+				personsDB
+					.update(updatedPerson.id, updatedPerson)
+					.then((returnedPerson) => {
+						setPersons(
+							persons.map((person) =>
+								person.id !== returnedPerson.id
+									? person
+									: returnedPerson
+							)
+						);
+						setNewName("");
+						setNewNumber("");
+					});
+			}
+		} else {
+			const personObject = {
+				name: newName,
+				number: newNumber,
+			};
+
+			personsDB.create(personObject).then((returnedPerson) => {
+				setPersons(persons.concat(returnedPerson));
+				setNewName("");
+				setNewNumber("");
+			});
+		}
 	};
 
 	const handlePersonChange = (event) => setNewName(event.target.value);
