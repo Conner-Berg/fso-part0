@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
+import savePerson from "./services/savePerson";
 
 const App = () => {
 	const [persons, setPersons] = useState([]);
@@ -10,13 +10,11 @@ const App = () => {
 	const [newNumber, setNewNumber] = useState("");
 	const [search, setSearch] = useState("");
 
-	const hook = () => {
-		axios.get("http://localhost:3001/persons").then((response) => {
-			setPersons(response.data);
-		});
-	};
-
-	useEffect(hook, []);
+	useEffect(() => {
+		savePerson
+			.getAll()
+			.then((initialPersons) => setPersons(initialPersons));
+	}, []);
 
 	const addPerson = (event) => {
 		event.preventDefault();
@@ -29,9 +27,12 @@ const App = () => {
 			name: newName,
 			number: newNumber,
 		};
-		setPersons(persons.concat(personObject));
-		setNewName("");
-		setNewNumber("");
+
+		savePerson.create(personObject).then((returnedPerson) => {
+			setPersons(persons.concat(returnedPerson));
+			setNewName("");
+			setNewNumber("");
+		});
 	};
 
 	const handlePersonChange = (event) => setNewName(event.target.value);
