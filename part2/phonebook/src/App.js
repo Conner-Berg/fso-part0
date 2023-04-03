@@ -14,47 +14,63 @@ const App = () => {
 		personsDB.getAll().then((initialPersons) => setPersons(initialPersons));
 	}, []);
 
+	const addNewPerson = (personObject) => {
+		personsDB.create(personObject).then((returnedPerson) => {
+			setPersons(persons.concat(returnedPerson));
+			setNewName("");
+			setNewNumber("");
+		});
+	};
+
+	const updateExistingPerson = (existingPerson, newNumber) => {
+		const updatedPerson = { ...existingPerson, number: newNumber };
+		personsDB
+			.update(updatedPerson.id, updatedPerson)
+			.then((returnedPerson) => {
+				setPersons(
+					persons.map((person) =>
+						person.id !== returnedPerson.id
+							? person
+							: returnedPerson
+					)
+				);
+				setNewName("");
+				setNewNumber("");
+			});
+	};
+
 	const addPerson = (event) => {
 		event.preventDefault();
 
-		const nameExists = persons.find((person) => person.name === newName);
+		if (!newName || !newNumber) {
+			alert("Please enter a name and number");
+			return;
+		}
 
-		if (nameExists.number === newNumber)
-			return alert(
+		const existingPerson = persons.find(
+			(person) => person.name === newName
+		);
+
+		if (existingPerson && existingPerson.number === newNumber) {
+			alert(
 				`${newName} is already added to the phonebook with that number`
 			);
+			return;
+		}
 
-		if (nameExists) {
+		if (existingPerson) {
 			const userConfirms = window.confirm(
 				`${newName} is already added to phonebook, replace the old number with a new one?`
 			);
 			if (userConfirms) {
-				const updatedPerson = { ...nameExists, number: newNumber };
-				personsDB
-					.update(updatedPerson.id, updatedPerson)
-					.then((returnedPerson) => {
-						setPersons(
-							persons.map((person) =>
-								person.id !== returnedPerson.id
-									? person
-									: returnedPerson
-							)
-						);
-						setNewName("");
-						setNewNumber("");
-					});
+				updateExistingPerson(existingPerson, newNumber);
 			}
 		} else {
 			const personObject = {
 				name: newName,
 				number: newNumber,
 			};
-
-			personsDB.create(personObject).then((returnedPerson) => {
-				setPersons(persons.concat(returnedPerson));
-				setNewName("");
-				setNewNumber("");
-			});
+			addNewPerson(personObject);
 		}
 	};
 
