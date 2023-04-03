@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
-import savePerson from "./services/savePerson";
+import personsDB from "./services/personsDB";
 
 const App = () => {
 	const [persons, setPersons] = useState([]);
@@ -11,9 +11,7 @@ const App = () => {
 	const [search, setSearch] = useState("");
 
 	useEffect(() => {
-		savePerson
-			.getAll()
-			.then((initialPersons) => setPersons(initialPersons));
+		personsDB.getAll().then((initialPersons) => setPersons(initialPersons));
 	}, []);
 
 	const addPerson = (event) => {
@@ -28,7 +26,7 @@ const App = () => {
 			number: newNumber,
 		};
 
-		savePerson.create(personObject).then((returnedPerson) => {
+		personsDB.create(personObject).then((returnedPerson) => {
 			setPersons(persons.concat(returnedPerson));
 			setNewName("");
 			setNewNumber("");
