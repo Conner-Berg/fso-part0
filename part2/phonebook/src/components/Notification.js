@@ -1,13 +1,9 @@
 const Notification = ({ result, message }) => {
-	if (message === null) {
-		return null;
-	}
+	if (result === null) return;
 
-	return (
-		<div className={result} notification>
-			{message}
-		</div>
-	);
+	const allClassNames = `notification ${result}`;
+
+	return <div className={allClassNames}>{message}</div>;
 };
 
 export default Notification;

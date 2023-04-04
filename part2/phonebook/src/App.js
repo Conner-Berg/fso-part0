@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
+import Notification from "./components/Notification";
 import personsDB from "./services/personsDB";
 
 const App = () => {
@@ -9,6 +10,8 @@ const App = () => {
 	const [newName, setNewName] = useState("");
 	const [newNumber, setNewNumber] = useState("");
 	const [search, setSearch] = useState("");
+	const [result, setResult] = useState(null);
+	const [message, setMessage] = useState(null);
 
 	useEffect(() => {
 		personsDB.getAll().then((initialPersons) => setPersons(initialPersons));
@@ -37,6 +40,14 @@ const App = () => {
 				setNewName("");
 				setNewNumber("");
 			});
+	};
+
+	const getSuccess = () => {
+		setResult("success");
+		setMessage(`Added ${newName}`);
+		setTimeout(() => {
+			setResult(null);
+		}, 5000);
 	};
 
 	const addPerson = (event) => {
@@ -72,6 +83,7 @@ const App = () => {
 			};
 			addNewPerson(personObject);
 		}
+		getSuccess();
 	};
 
 	const handlePersonChange = (event) => setNewName(event.target.value);
@@ -93,6 +105,8 @@ const App = () => {
 	return (
 		<div>
 			<h2>Phonebook</h2>
+
+			<Notification result={result} message={message} />
 
 			<Filter value={search} onChange={handleSearchChange} />
 
