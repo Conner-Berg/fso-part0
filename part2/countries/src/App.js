@@ -25,9 +25,24 @@ const App = () => {
 				<div key={country.cca3}>{country.name.common}</div>
 			));
 		} else if (filteredCountries.length === 1) {
+			const country = filteredCountries[0];
+			const languages = Object.values(country.languages);
 			return (
-				<div key={filteredCountries[0].cca3}>
-					{filteredCountries[0].name.common}
+				<div>
+					<h1>{country.name.common}</h1>
+					<div>capital {country.capital[0]}</div>
+					<p>area {country.area}</p>
+					<h3>languages:</h3>
+					<ul>
+						{languages.map((language) => (
+							<li key={language}>{language}</li>
+						))}
+					</ul>
+					<img
+						src={country.flags.svg}
+						alt={`${country.name.common} flag`}
+						style={{ width: "150px" }}
+					/>
 				</div>
 			);
 		} else {
