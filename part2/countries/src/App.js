@@ -5,6 +5,7 @@ import CountryDetails from "./components/CountryDetails";
 const App = () => {
 	const [countries, setCountries] = useState([]);
 	const [search, setSearch] = useState("");
+	const [shownCountry, setShownCountry] = useState(null);
 
 	useEffect(() => {
 		axios.get("https://restcountries.com/v3.1/all").then((response) => {
@@ -23,7 +24,15 @@ const App = () => {
 			return "Too many matches, specify another filter";
 		} else if (filteredCountries.length > 1) {
 			return filteredCountries.map((country) => (
-				<div key={country.cca3}>{country.name.common}</div>
+				<div key={country.cca3}>
+					{country.name.common}{" "}
+					<button onClick={() => setShownCountry(country)}>
+						show
+					</button>
+					{shownCountry && shownCountry.cca3 === country.cca3 && (
+						<CountryDetails country={shownCountry} />
+					)}
+				</div>
 			));
 		} else if (filteredCountries.length === 1) {
 			return <CountryDetails country={filteredCountries[0]} />;
