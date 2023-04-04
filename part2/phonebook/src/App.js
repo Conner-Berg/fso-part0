@@ -22,6 +22,7 @@ const App = () => {
 			setPersons(persons.concat(returnedPerson));
 			setNewName("");
 			setNewNumber("");
+			getSuccess(returnedPerson.name);
 		});
 	};
 
@@ -39,12 +40,29 @@ const App = () => {
 				);
 				setNewName("");
 				setNewNumber("");
+				getSuccess(existingPerson.name);
+			})
+			.catch((error) => {
+				getError(existingPerson.name);
+				setPersons(
+					persons.filter((person) => person.id !== existingPerson.id)
+				);
 			});
 	};
 
-	const getSuccess = () => {
+	const getSuccess = (person) => {
 		setResult("success");
-		setMessage(`Added ${newName}`);
+		setMessage(`Added ${person}`);
+		setTimeout(() => {
+			setResult(null);
+		}, 5000);
+	};
+
+	const getError = (person) => {
+		setResult("error");
+		setMessage(
+			`Information of ${person} has already been removed from server`
+		);
 		setTimeout(() => {
 			setResult(null);
 		}, 5000);
@@ -83,7 +101,6 @@ const App = () => {
 			};
 			addNewPerson(personObject);
 		}
-		getSuccess();
 	};
 
 	const handlePersonChange = (event) => setNewName(event.target.value);
