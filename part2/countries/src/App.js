@@ -16,9 +16,23 @@ const App = () => {
 	);
 
 	const displayResult = () => {
-		return filteredCountries.map((country) => (
-			<div key={country.cca3}>{country.name.common}</div>
-		));
+		if (search === "") {
+			return "Enter a country name";
+		} else if (filteredCountries.length > 10) {
+			return "Too many matches, specify another filter";
+		} else if (filteredCountries.length > 1) {
+			return filteredCountries.map((country) => (
+				<div key={country.cca3}>{country.name.common}</div>
+			));
+		} else if (filteredCountries.length === 1) {
+			return (
+				<div key={filteredCountries[0].cca3}>
+					{filteredCountries[0].name.common}
+				</div>
+			);
+		} else {
+			return "No matches";
+		}
 	};
 
 	return (
