@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
-import Persons from "./components/Persons";
+import People from "./components/People";
 import Notification from "./components/Notification";
-import personsDB from "./services/personsDB";
+import peopleDB from "./services/peopleDB";
 
 const App = () => {
-	const [persons, setPersons] = useState([]);
+	const [people, setPeople] = useState([]);
 	const [newName, setNewName] = useState("");
 	const [newNumber, setNewNumber] = useState("");
 	const [search, setSearch] = useState("");
@@ -14,12 +14,12 @@ const App = () => {
 	const [message, setMessage] = useState(null);
 
 	useEffect(() => {
-		personsDB.getAll().then((initialPersons) => setPersons(initialPersons));
+		peopleDB.getAll().then((initialPeople) => setPeople(initialPeople));
 	}, []);
 
 	const addNewPerson = (personObject) => {
-		personsDB.create(personObject).then((returnedPerson) => {
-			setPersons(persons.concat(returnedPerson));
+		peopleDB.create(personObject).then((returnedPerson) => {
+			setPeople(people.concat(returnedPerson));
 			setNewName("");
 			setNewNumber("");
 			getSuccess(returnedPerson.name);
@@ -28,11 +28,11 @@ const App = () => {
 
 	const updateExistingPerson = (existingPerson, newNumber) => {
 		const updatedPerson = { ...existingPerson, number: newNumber };
-		personsDB
+		peopleDB
 			.update(updatedPerson.id, updatedPerson)
 			.then((returnedPerson) => {
-				setPersons(
-					persons.map((person) =>
+				setPeople(
+					people.map((person) =>
 						person.id !== returnedPerson.id
 							? person
 							: returnedPerson
@@ -44,8 +44,8 @@ const App = () => {
 			})
 			.catch((error) => {
 				getError(existingPerson.name);
-				setPersons(
-					persons.filter((person) => person.id !== existingPerson.id)
+				setPeople(
+					people.filter((person) => person.id !== existingPerson.id)
 				);
 			});
 	};
@@ -76,9 +76,7 @@ const App = () => {
 			return;
 		}
 
-		const existingPerson = persons.find(
-			(person) => person.name === newName
-		);
+		const existingPerson = people.find((person) => person.name === newName);
 
 		if (existingPerson && existingPerson.number === newNumber) {
 			alert(
@@ -107,14 +105,14 @@ const App = () => {
 	const handleNumberChange = (event) => setNewNumber(event.target.value);
 	const handleSearchChange = (event) => setSearch(event.target.value);
 
-	const filteredPersons = persons.filter((person) =>
+	const filteredPeople = people.filter((person) =>
 		person.name.toLowerCase().includes(search.toLowerCase())
 	);
 
 	const removePerson = (person) => {
 		if (window.confirm(`Delete ${person.name}?`)) {
-			personsDB.remove(person.id).then(() => {
-				setPersons(persons.filter((p) => p.id !== person.id));
+			peopleDB.remove(person.id).then(() => {
+				setPeople(people.filter((p) => p.id !== person.id));
 			});
 		}
 	};
@@ -139,7 +137,7 @@ const App = () => {
 
 			<h3>Numbers</h3>
 
-			<Persons persons={filteredPersons} removePerson={removePerson} />
+			<People people={filteredPeople} removePerson={removePerson} />
 		</div>
 	);
 };
