@@ -3,7 +3,7 @@ import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import People from "./components/People";
 import Notification from "./components/Notification";
-import peopleDB from "./services/peopleDB";
+import personService from "./services/personService";
 
 const App = () => {
 	const [people, setPeople] = useState([]);
@@ -14,21 +14,26 @@ const App = () => {
 	const [message, setMessage] = useState(null);
 
 	useEffect(() => {
-		peopleDB.getAll().then((initialPeople) => setPeople(initialPeople));
+		personService
+			.getAll()
+			.then((initialPeople) => setPeople(initialPeople));
 	}, []);
 
 	const addNewPerson = (personObject) => {
-		peopleDB.create(personObject).then((returnedPerson) => {
-			setPeople(people.concat(returnedPerson));
-			setNewName("");
-			setNewNumber("");
-			getSuccess(returnedPerson.name);
-		});
+		personService
+			.create(personObject)
+			.then((returnedPerson) => {
+				setPeople(people.concat(returnedPerson));
+				setNewName("");
+				setNewNumber("");
+				getSuccess(returnedPerson.name);
+			})
+			.catch((error) => getValidationError(error));
 	};
 
 	const updateExistingPerson = (existingPerson, newNumber) => {
 		const updatedPerson = { ...existingPerson, number: newNumber };
-		peopleDB
+		personService
 			.update(updatedPerson.id, updatedPerson)
 			.then((returnedPerson) => {
 				setPeople(
@@ -43,7 +48,7 @@ const App = () => {
 				getSuccess(existingPerson.name);
 			})
 			.catch((error) => {
-				getError(existingPerson.name);
+				getAlreadyRemovedError(existingPerson.name);
 				setPeople(
 					people.filter((person) => person.id !== existingPerson.id)
 				);
@@ -58,11 +63,24 @@ const App = () => {
 		}, 5000);
 	};
 
-	const getError = (person) => {
+	const getAlreadyRemovedError = (person) => {
 		setResult("error");
 		setMessage(
 			`Information of ${person} has already been removed from server`
 		);
+		setTimeout(() => {
+			setResult(null);
+		}, 5000);
+	};
+
+	const getValidationError = (error) => {
+		const regexError = /ValidationError[^<]*/;
+		const regexMessage = /\(`[^`]+`\).*\(\d+\)./;
+		const validationError = error.response.data.match(regexError)[0];
+		const userMessage = error.response.data.match(regexMessage)[0];
+		console.log(validationError);
+		setResult("error");
+		setMessage(userMessage);
 		setTimeout(() => {
 			setResult(null);
 		}, 5000);
@@ -111,7 +129,7 @@ const App = () => {
 
 	const removePerson = (person) => {
 		if (window.confirm(`Delete ${person.name}?`)) {
-			peopleDB.remove(person.id).then(() => {
+			personService.remove(person.id).then(() => {
 				setPeople(people.filter((p) => p.id !== person.id));
 			});
 		}
